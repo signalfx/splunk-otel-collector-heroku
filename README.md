@@ -64,8 +64,10 @@ buildpack:
 #          will result in unexpected behavior
 cd <HEROKU_APP_DIRECTORY>
 
-# Configure Heroku App to expose Dyno metadata; required to set global dimensions.
-# See https://devcenter.heroku.com/articles/dyno-metadata for more information.
+# Configure Heroku App to expose Dyno metadata
+# This metadata is required by the Splunk OpenTelemetry Connector to
+# set global dimensions such as `app_name`, `app_id` and `dyno_id`.
+# See [here](https://devcenter.heroku.com/articles/dyno-metadata) for more information.
 heroku labs:enable runtime-dyno-metadata
 
 # Add buildpack for Splunk OpenTelemetry Connector
@@ -82,12 +84,12 @@ heroku config:set SPLUNK_REALM=<YOUR_REALM>
 # Optionally define custom configuration file in your Heroku project directory
 #heroku config:set SPLUNK_CONFIG=/app/mydir/myconfig.yaml
 
-# If these buildpacks are being added to an existing project,
-# create an empty commit prior to deploying the app
+# Create an emptycommit and deploy your app (assumes `main` branch exists)
 git commit --allow-empty -m "empty commit"
-
-# Deploy your app (assumes `main` branch exists)
 git push heroku main
+
+# Check logs
+#heroku logs -a <app-name> --tail
 ```
 
 ## Advanced Configuration
@@ -116,7 +118,7 @@ To try the buildpack with the included demo application:
 #          will result in unexpected behavior
 cd test
 git init
-heroku apps:create splunk-example
+heroku apps:create ${USER}-test
 
 # Configure Heroku App to expose Dyno metadata; required to set global dimensions.
 # See https://devcenter.heroku.com/articles/dyno-metadata for more information.
@@ -139,7 +141,7 @@ git add -A && git commit -av -m "add test application"
 git push heroku main
 
 # Check logs
-heroku logs -a splunk-example --tail
+heroku logs -a ${USER}-test --tail
 ```
 
 ## License
