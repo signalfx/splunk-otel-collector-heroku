@@ -97,7 +97,8 @@ git push heroku main
 Use the following environment variables to configure this buildpack
 
 | Environment Variable      | Required | Default                                             | Description                                                                                                                |
-| ----------------------    | -------- | -------                                             | -------------------------------------------------------------------------                                                  |
+|---------------------------|----------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `SFX_AGENT_DISABLED`      | No       | `false`                                             | Whether to disable installing the smart agent as part of the buildpack.                                                    |
 | `SPLUNK_ACCESS_TOKEN`     | Yes      |                                                     | [Splunk access token](https://docs.splunk.com/Observability/admin/authentication-tokens/org-tokens.html#admin-org-tokens). |
 | `SPLUNK_REALM`            | Yes      |                                                     | [Splunk realm](https://dev.splunk.com/observability/docs/realms_in_endpoints/).                                            |
 | `SPLUNK_API_URL`          | No       | `https://api.SPLUNK_REALM.signalfx.com`             | The Splunk API base URL.                                                                                                   |
