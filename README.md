@@ -25,12 +25,12 @@
 
 ---
 
-# Splunk OpenTelemetry Connector for Heroku
+# Splunk OpenTelemetry Collector for Heroku
 
-The Splunk OpenTelemetry Connector for Heroku is a [buildpack](https://devcenter.heroku.com/articles/buildpacks) for the
+The Splunk OpenTelemetry Collector for Heroku is a [buildpack](https://devcenter.heroku.com/articles/buildpacks) for the
 [Splunk OpenTelemetry
-Connector](https://github.com/signalfx/splunk-otel-collector). The buildpack to
-installs and runs the Splunk OpenTelemetry Connector on a Dyno to receive,
+Collector](https://github.com/signalfx/splunk-otel-collector). The buildpack to
+installs and runs the Splunk OpenTelemetry Collector on a Dyno to receive,
 process and export metric and trace data for [Splunk Observability
 Cloud](https://www.observability.splunk.com/):
 
@@ -65,12 +65,12 @@ buildpack:
 cd <HEROKU_APP_DIRECTORY>
 
 # Configure Heroku App to expose Dyno metadata
-# This metadata is required by the Splunk OpenTelemetry Connector to
+# This metadata is required by the Splunk OpenTelemetry Collector to
 # set global dimensions such as `app_name`, `app_id` and `dyno_id`.
 # See [here](https://devcenter.heroku.com/articles/dyno-metadata) for more information.
 heroku labs:enable runtime-dyno-metadata
 
-# Add buildpack for Splunk OpenTelemetry Connector
+# Add buildpack for Splunk OpenTelemetry Collector
 # Note both lines are required together
 heroku buildpacks:add https://github.com/signalfx/splunk-otel-collector-heroku.git#\
 $(curl -s https://api.github.com/repos/signalfx/splunk-otel-collector-heroku/releases | grep '"tag_name"' | head -n 1 | cut -d'"' -f4)
@@ -105,7 +105,7 @@ Use the following environment variables to configure this buildpack
 | `SPLUNK_INGEST_URL`       | No       | `https://ingest.SPLUNK_REALM.signalfx.com`          | The Splunk Infrastructure Monitoring base URL.                                                                             |
 | `SPLUNK_LOG_FILE`         | No       | `/dev/stdout`                                       | Specify location of agent logs. If not specified, logs will go to stdout.                                                  |
 | `SPLUNK_MEMORY_TOTAL_MIB` | No       | `512`                                               | Total available memory to agent.                                                                                           |
-| `SPLUNK_OTEL_VERSION`     | No       | `latest`                                            | Version of Splunk OTel Connector to use. Defaults to latest.                                                               |
+| `SPLUNK_OTEL_VERSION`     | No       | `latest`                                            | Version of Splunk OTel Collector to use. Defaults to latest.                                                               |
 | `SPLUNK_TRACE_URL`        | No       | `https://ingest.SPLUNK_REALM.signalfx.com/v2/trace` | The Splunk APM base URL.                                                                                                   |
 
 ## Example
@@ -124,7 +124,7 @@ heroku apps:create ${USER}-test
 # See https://devcenter.heroku.com/articles/dyno-metadata for more information.
 heroku labs:enable runtime-dyno-metadata
 
-# Add buildpack for Splunk OpenTelemetry Connector
+# Add buildpack for Splunk OpenTelemetry Collector
 # Note both lines are required together
 heroku buildpacks:add https://github.com/signalfx/splunk-otel-collector-heroku.git#\
 $(curl -s https://api.github.com/repos/signalfx/splunk-otel-collector-heroku/releases | grep '"tag_name"' | head -n 1 | cut -d'"' -f4)

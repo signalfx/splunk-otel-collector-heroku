@@ -23,13 +23,13 @@ indent() {
   sed -u 's/^/       /'
 }
 
-# Use the latest version of Splunk OpenTelemetry Connector if none is specified
+# Use the latest version of Splunk OpenTelemetry Collector if none is specified
 SPLUNK_OTEL_VERSION=$(curl -s https://api.github.com/repos/signalfx/splunk-otel-collector/releases/latest | grep tarball_url | cut -d'"' -f4 | cut -d'/' -f8 | cut -d'v' -f2)
-# Get Splunk OpenTelemetry Connector version from the environment if available
+# Get Splunk OpenTelemetry Collector version from the environment if available
 if [ -f "$ENV_DIR/SPLUNK_OTEL_VERSION" ]; then
   SPLUNK_OTEL_VERSION=$(cat "$ENV_DIR/SPLUNK_OTEL_VERSION")
 fi
-splunk_otel_connector="otelcol_linux_amd64"
+splunk_otel_collector="otelcol_linux_amd64"
 
 # Use the latest version of the SignalFx Agent if none is specified
 SFX_AGENT_VERSION=$(curl -s https://api.github.com/repos/signalfx/signalfx-agent/releases/latest | grep tarball_url | cut -d'"' -f4 | cut -d'/' -f8 | cut -d'v' -f2)
@@ -42,12 +42,12 @@ signalfx_agent_tar="signalfx-agent-$SFX_AGENT_VERSION.tar.gz"
 SPLUNK_CONFIG_DIR="$BUILD_DIR/.splunk"
 cp "$BUILDPACK_DIR/setup/config.yaml" "$SPLUNK_CONFIG_DIR"
 
-echo "-----> Downloading Splunk OpenTelemetry Connector $SPLUNK_OTEL_VERSION ($splunk_otel_connector)"
-wget -P "$SPLUNK_CONFIG_DIR/" "https://github.com/signalfx/splunk-otel-collector/releases/download/v$SPLUNK_OTEL_VERSION/$splunk_otel_connector" -o $splunk_otel_connector > /dev/null 2>&1
-#curl -L "https://github.com/signalfx/splunk-otel-collector/releases/download/v$SPLUNK_OTEL_VERSION/$splunk_otel_connector" -o $SPLUNK_CONFIG_DIR/$splunk_otel_connector > /dev/null 2>&1
+echo "-----> Downloading Splunk OpenTelemetry Collector $SPLUNK_OTEL_VERSION ($splunk_otel_collector)"
+wget -P "$SPLUNK_CONFIG_DIR/" "https://github.com/signalfx/splunk-otel-collector/releases/download/v$SPLUNK_OTEL_VERSION/$splunk_otel_collector" -o $splunk_otel_collector > /dev/null 2>&1
+#curl -L "https://github.com/signalfx/splunk-otel-collector/releases/download/v$SPLUNK_OTEL_VERSION/$splunk_otel_collector" -o $SPLUNK_CONFIG_DIR/$splunk_otel_collector > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "Downloading Splunk OpenTelemetry Connector tarball failed" | indent
-    echo "$SPLUNK_OTEL_VERSION may not be a valid version of the Splunk OpenTelemetry Connector." | indent
+    echo "Downloading Splunk OpenTelemetry Collector tarball failed" | indent
+    echo "$SPLUNK_OTEL_VERSION may not be a valid version of the Splunk OpenTelemetry Collector." | indent
     echo "Find valid versions here: https://github.com/signalfx/splunk-otel-collector/tags" | indent
     exit 1;
 fi

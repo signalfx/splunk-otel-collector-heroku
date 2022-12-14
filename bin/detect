@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo "Splunk OpenTelemetry Connector installation" && exit 0
+echo "Splunk OpenTelemetry Collector installation" && exit 0
