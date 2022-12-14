@@ -54,7 +54,7 @@ else
     mkdir -p $(dirname $SPLUNK_LOG_FILE)
 fi
 
-# Start connector
+# Start the splunk otel collector
 
 (cd $SPLUNK_CONFIG_DIR/signalfx-agent/ && bin/patch-interpreter $SPLUNK_CONFIG_DIR/signalfx-agent/)
 
