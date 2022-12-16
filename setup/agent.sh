@@ -51,6 +51,10 @@ if [[ -z "$SPLUNK_TRACE_URL" ]]; then
     export SPLUNK_TRACE_URL="https://ingest.$SPLUNK_REALM.signalfx.com/v2/trace"
 fi
 
+if [[ -z "$SPLUNK_PROFILING_URL" ]]; then
+    export SPLUNK_PROFILING_URL="https://ingest.$SPLUNK_REALM.signalfx.com/v1/log"
+fi
+
 
 if [[ -z "$SPLUNK_LOG_FILE" ]]; then
     export SPLUNK_LOG_FILE=/dev/stdout

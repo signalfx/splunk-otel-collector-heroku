@@ -121,11 +121,16 @@ exporters:
     access_token: "${SPLUNK_ACCESS_TOKEN}"
     api_url: "${SPLUNK_API_URL}"
     ingest_url: "${SPLUNK_INGEST_URL}"
+  splunk_hec/profiling:
+    access_token: "${SPLUNK_ACCESS_TOKEN}"
+    endpoint: "${SPLUNK_PROFILING_URL}"
+
   # Send to gateway
   #otlp:
   # endpoint: "${SPLUNK_GATEWAY_URL}:4317"
   # insecure: true
-  # Debug
+
+  # Debug. Add this to the pipeline you want to debug.
   logging:
     loglevel: debug
 
@@ -148,3 +153,8 @@ service:
       receivers: [prometheus/internal]
       processors: [memory_limiter, batch, metricstransform/heroku]
       exporters: [signalfx]
+    logs/profiling:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [splunk_hec/profiling]
+
