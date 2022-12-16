@@ -1,1 +1,1 @@
-web: node send_metrics.js
+web: OTEL_SERVICE_NAME=my-test-app OTEL_LOG_LEVEL=info node -r ./instrument.js send_metrics.js
