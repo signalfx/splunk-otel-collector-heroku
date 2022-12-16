@@ -16,6 +16,9 @@ const { start } = require('@splunk/otel');
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
 const { getInstrumentations } = require('@splunk/otel/lib/instrumentations');
 
+// To avoid clashing with the collector's environment variables, we choose to delete this environment variable before the
+// application's instrumentation starts. We explicitly set the endpoint to localhost below to target the collector
+// hosted locally.
 delete process.env.SPLUNK_REALM;
 
 start({
