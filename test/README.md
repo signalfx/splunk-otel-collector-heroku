@@ -2,7 +2,7 @@
 
 Simple NodeJS application based on [Splunk Distribution of OpenTelemetry for Node.js](https://github.com/signalfx/splunk-otel-js).
 
-Emits metrics to local Splunk OpenTelemetry Collector. See Procfile for run command.
+Emits metrics to the local Splunk OpenTelemetry Collector. See Procfile for the run command.
 
 
 To run locally:
