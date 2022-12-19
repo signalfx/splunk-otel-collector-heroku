@@ -17,6 +17,8 @@ extensions:
       #endpoint: "${SPLUNK_GATEWAY_URL}"
   zpages:
     #endpoint: 0.0.0.0:55679
+  memory_ballast:
+    size_mib: ${SPLUNK_BALLAST_SIZE_MIB}
 
 receivers:
   jaeger:
@@ -40,14 +42,14 @@ receivers:
   prometheus/internal:
     config:
       scrape_configs:
-      - job_name: 'otel-collector'
-        scrape_interval: 10s
-        static_configs:
-        - targets: ['0.0.0.0:8888']
-        metric_relabel_configs:
-          - source_labels: [ __name__ ]
-            regex: '.*grpc_io.*'
-            action: drop
+        - job_name: 'otel-collector'
+          scrape_interval: 10s
+          static_configs:
+            - targets: ['0.0.0.0:8888']
+          metric_relabel_configs:
+            - source_labels: [ __name__ ]
+              regex: '.*grpc_io.*'
+              action: drop
   signalfx:
     endpoint: 0.0.0.0:9943
   zipkin:
@@ -55,45 +57,36 @@ receivers:
 
 processors:
   batch:
-  # Enabling the memory_limiter is strongly recommended for every pipeline.
-  # Configuration is based on the amount of memory allocated to the collector.
-  # In general, the ballast should be set to 1/3 of the collector's memory, the limit
-  # should be 90% of the collector's memory up to 2GB. The simplest way to specify the
-  # ballast size is set the value of SPLUNK_BALLAST_SIZE_MIB env variable. Alternatively, the
-  # --mem-ballast-size-mib command line flag can be passed and take priority.
-  # For more information about memory limiter, see
-  # https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/memorylimiter/README.md
   memory_limiter:
-    ballast_size_mib: ${SPLUNK_BALLAST_SIZE_MIB}
     check_interval: 2s
     limit_mib: ${SPLUNK_MEMORY_LIMIT_MIB}
   attributes/heroku:
     actions:
-    - action: insert
-      key: dyno_id
-      value: ${env:HEROKU_DYNO_ID}
-    - action: insert
-      key: app_id
-      value: ${env:HEROKU_APP_ID}
-    - action: insert
-      key: app_name
-      value: ${env:HEROKU_APP_NAME}
+      - action: insert
+        key: dyno_id
+        value: ${env:HEROKU_DYNO_ID}
+      - action: insert
+        key: app_id
+        value: ${env:HEROKU_APP_ID}
+      - action: insert
+        key: app_name
+        value: ${env:HEROKU_APP_NAME}
   metricstransform/heroku:
     transforms:
-    - include: .*
-      match_type: regexp
-      action: update
-      operations:
-        - action: add_label
-          new_label: dyno_id
-          new_value: ${env:HEROKU_DYNO_ID}
-        - action: add_label
-          new_label: app_id
-          new_value: ${env:HEROKU_APP_ID}
-        - action: add_label
-          new_label: app_name
-          new_value: ${env:HEROKU_APP_NAME}
-  # Optional: The following processor can be used to add a default "deployment.environment" attribute to the logs and 
+      - include: .*
+        match_type: regexp
+        action: update
+        operations:
+          - action: add_label
+            new_label: dyno_id
+            new_value: ${env:HEROKU_DYNO_ID}
+          - action: add_label
+            new_label: app_id
+            new_value: ${env:HEROKU_APP_ID}
+          - action: add_label
+            new_label: app_name
+            new_value: ${env:HEROKU_APP_NAME}
+  # Optional: The following processor can be used to add a default "deployment.environment" attribute to the logs and
   # traces when it's not populated by instrumentation libraries.
   # If enabled, make sure to enable this processor in the pipeline below.
   #resource/add_environment:
@@ -113,7 +106,7 @@ exporters:
     api_url: "${SPLUNK_API_URL}"
     ingest_url: "${SPLUNK_INGEST_URL}"
   splunk_hec/profiling:
-    access_token: "${SPLUNK_ACCESS_TOKEN}"
+    token: "${SPLUNK_ACCESS_TOKEN}"
     endpoint: "${SPLUNK_PROFILING_URL}"
   # Send to gateway
   #otlp:
@@ -125,14 +118,14 @@ exporters:
     loglevel: debug
 
 service:
-  extensions: [health_check, http_forwarder, zpages]
+  extensions: [health_check, http_forwarder, zpages, memory_ballast]
   pipelines:
     traces:
       receivers: [jaeger, otlp, zipkin]
       processors:
-      - memory_limiter
-      - batch
-      - attributes/heroku
+        - memory_limiter
+        - batch
+        - attributes/heroku
       #- resource/add_environment
       exporters: [sapm, signalfx]
     metrics:
