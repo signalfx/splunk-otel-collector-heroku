@@ -43,6 +43,9 @@ receivers:
           - source_labels: [ __name__ ]
             regex: '.*grpc_io.*'
             action: drop
+  smartagent/signalfx-forwarder:
+    type: signalfx-forwarder
+    listenAddress: 0.0.0.0:9080
   signalfx:
     endpoint: 0.0.0.0:9943
   zipkin:
