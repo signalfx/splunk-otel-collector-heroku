@@ -21,14 +21,8 @@ fi
 # Set configuration file
 
 export SPLUNK_CONFIG_DIR="$HOME/.splunk"
-if [[ "${SFX_AGENT_DISABLED}" == "true" ]]; then
-    export FALLBACK_AGENT_CONFIG="$SPLUNK_CONFIG_DIR/config_without_sa.yaml"
-else
-    export SPLUNK_COLLECTD_CONFIG_DIR="$SPLUNK_CONFIG_DIR/signalfx-agent/var/run/collectd"
-    mkdir -p "$SPLUNK_COLLECTD_CONFIG_DIR"
 
-    export FALLBACK_AGENT_CONFIG="$SPLUNK_CONFIG_DIR/config.yaml"
-fi
+export FALLBACK_AGENT_CONFIG="$SPLUNK_CONFIG_DIR/config.yaml"
 
 export DEFAULT_APP_CONFIG="$HOME/config.yaml"
 
@@ -60,13 +54,6 @@ if [[ -z "$SPLUNK_LOG_FILE" ]]; then
     export SPLUNK_LOG_FILE=/dev/stdout
 else
     mkdir -p $(dirname $SPLUNK_LOG_FILE)
-fi
-
-if [[ "${SFX_AGENT_DISABLED}" != "true" ]]; then
-
-    export SPLUNK_BUNDLE_DIR="$SPLUNK_CONFIG_DIR/signalfx-agent"
-
-    (cd $SPLUNK_CONFIG_DIR/signalfx-agent/ && bin/patch-interpreter $SPLUNK_CONFIG_DIR/signalfx-agent/)
 fi
 
 chmod a+x $SPLUNK_CONFIG_DIR/otelcol_linux_amd64

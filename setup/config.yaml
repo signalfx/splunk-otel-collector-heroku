@@ -1,10 +1,3 @@
-config_sources:
-  env:
-    defaults:
-      HEROKU_DYNO_ID: "unset"
-      HEROKU_APP_ID: "unset"
-      HEROKU_APP_NAME: "unset"
-
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
@@ -15,10 +8,6 @@ extensions:
       endpoint: "${SPLUNK_API_URL}"
       # Use instead when sending to gateway
       #endpoint: "${SPLUNK_GATEWAY_URL}"
-  smartagent:
-    bundleDir: "${SPLUNK_BUNDLE_DIR}"
-    collectd:
-      configDir: "${SPLUNK_COLLECTD_DIR}"
   zpages:
     #endpoint: 0.0.0.0:55679
   memory_ballast:
@@ -54,8 +43,6 @@ receivers:
           - source_labels: [ __name__ ]
             regex: '.*grpc_io.*'
             action: drop
-  smartagent/heroku-metadata:
-    type: heroku-metadata
   smartagent/signalfx-forwarder:
     type: signalfx-forwarder
     listenAddress: 0.0.0.0:9080
@@ -69,40 +56,8 @@ processors:
   memory_limiter:
     check_interval: 2s
     limit_mib: ${SPLUNK_MEMORY_LIMIT_MIB}
-  attributes/heroku:
-    actions:
-    - action: insert
-      key: dyno_id
-      value: ${env:HEROKU_DYNO_ID}
-    - action: insert
-      key: app_id
-      value: ${env:HEROKU_APP_ID}
-    - action: insert
-      key: app_name
-      value: ${env:HEROKU_APP_NAME}
-  metricstransform/heroku:
-    transforms:
-    - include: .*
-      match_type: regexp
-      action: update
-      operations:
-        - action: add_label
-          new_label: dyno_id
-          new_value: ${env:HEROKU_DYNO_ID}
-        - action: add_label
-          new_label: app_id
-          new_value: ${env:HEROKU_APP_ID}
-        - action: add_label
-          new_label: app_name
-          new_value: ${env:HEROKU_APP_NAME}
-  # Optional: The following processor can be used to add a default "deployment.environment" attribute to the logs and 
-  # traces when it's not populated by instrumentation libraries.
-  # If enabled, make sure to enable this processor in the pipeline below.
-  #resource/add_environment:
-    #attributes:
-      #- action: insert
-        #key: deployment.environment
-        #value: staging/production/...
+  resourcedetection:
+    detectors: [heroku]
 
 exporters:
   # Traces
@@ -135,16 +90,15 @@ service:
       processors:
       - memory_limiter
       - batch
-      - attributes/heroku
-      #- resource/add_environment
+      - resourcedetection
       exporters: [sapm, signalfx]
     metrics:
       receivers: [otlp, signalfx, smartagent/heroku-metadata, smartagent/signalfx-forwarder]
-      processors: [memory_limiter, batch, metricstransform/heroku]
+      processors: [memory_limiter, batch, resourcedetection]
       exporters: [signalfx]
     metrics/internal:
       receivers: [prometheus/internal]
-      processors: [memory_limiter, batch, metricstransform/heroku]
+      processors: [memory_limiter, batch, resourcedetection]
       exporters: [signalfx]
     logs/profiling:
       receivers: [otlp]
