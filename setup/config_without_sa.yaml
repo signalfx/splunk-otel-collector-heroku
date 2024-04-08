@@ -17,8 +17,6 @@ extensions:
       #endpoint: "${SPLUNK_GATEWAY_URL}"
   zpages:
     #endpoint: 0.0.0.0:55679
-  memory_ballast:
-    size_mib: ${SPLUNK_BALLAST_SIZE_MIB}
 
 receivers:
   jaeger:
