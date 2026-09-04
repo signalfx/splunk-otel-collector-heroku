@@ -1,3 +1,5 @@
+:warning: **Heroku is moving to a sustaining engineering model. As result, we expect there will be no further development of this buildpack. This buildpack is deprecated and the repository will be archived in December 2026.** :warning:
+
 ---
 
 <p align="center">
