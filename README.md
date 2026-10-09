@@ -98,14 +98,13 @@ Use the following environment variables to configure this buildpack
 
 | Environment Variable      | Required | Default                                             | Description                                                                                                                |
 |---------------------------|----------|-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `SFX_AGENT_DISABLED`      | No       | `false`                                             | Whether to disable installing the smart agent as part of the buildpack.                                                    |
 | `SPLUNK_ACCESS_TOKEN`     | Yes      |                                                     | [Splunk access token](https://docs.splunk.com/Observability/admin/authentication-tokens/org-tokens.html#admin-org-tokens). |
 | `SPLUNK_REALM`            | Yes      |                                                     | [Splunk realm](https://dev.splunk.com/observability/docs/realms_in_endpoints/).                                            |
 | `SPLUNK_API_URL`          | No       | `https://api.SPLUNK_REALM.signalfx.com`             | The Splunk API base URL.                                                                                                   |
 | `SPLUNK_CONFIG`           | No       | `/app/config.yaml`                                  | The configuration to use. `/app/.splunk/config.yaml` used if default not found.                                            |
 | `SPLUNK_INGEST_URL`       | No       | `https://ingest.SPLUNK_REALM.signalfx.com`          | The Splunk Infrastructure Monitoring base URL.                                                                             |
-| `SPLUNK_LOG_FILE`         | No       | `/dev/stdout`                                       | Specify location of agent logs. If not specified, logs will go to stdout.                                                  |
-| `SPLUNK_MEMORY_TOTAL_MIB` | No       | `512`                                               | Total available memory to agent.                                                                                           |
+| `SPLUNK_LOG_FILE`         | No       | `/dev/stdout`                                       | Specify location of logs. If not specified, logs will go to stdout.                                                        |
+| `SPLUNK_MEMORY_TOTAL_MIB` | No       | `512`                                               | Total available memory.                                                                                                    |
 | `SPLUNK_OTEL_VERSION`     | No       | `latest`                                            | Version of Splunk OTel Collector to use. Defaults to latest.                                                               |
 | `SPLUNK_TRACE_URL`        | No       | `https://ingest.SPLUNK_REALM.signalfx.com/v2/trace` | The Splunk APM base URL.                                                                                                   |
 

@@ -4,7 +4,7 @@
 
 ### remote rejected
 
-Something is wrong with the heroku app. See the error messages preceeding this.
+Something is wrong with the heroku app. See the error messages preceding this.
 
 ### error fetching custom buildpack
 

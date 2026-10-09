@@ -31,20 +31,6 @@ if [ -f "$ENV_DIR/SPLUNK_OTEL_VERSION" ]; then
 fi
 splunk_otel_collector="otelcol_linux_amd64"
 
-# Use the latest version of the SignalFx Agent if none is specified
-SFX_AGENT_VERSION=$(curl -s https://api.github.com/repos/signalfx/signalfx-agent/releases/latest | grep tarball_url | cut -d'"' -f4 | cut -d'/' -f8 | cut -d'v' -f2)
-# Get SignalFx Agent version from the environment if available
-if [ -f "$ENV_DIR/SFX_AGENT_VERSION" ]; then
-  SFX_AGENT_VERSION=$(cat "$ENV_DIR/SFX_AGENT_VERSION")
-fi
-signalfx_agent_tar="signalfx-agent-$SFX_AGENT_VERSION.tar.gz"
-
-# Check if the SignalFx Agent download is explicitly disabled
-SFX_AGENT_DISABLED=false
-if [ -f "$ENV_DIR/SFX_AGENT_DISABLED" ]; then
-  SFX_AGENT_DISABLED=$(cat "$ENV_DIR/SFX_AGENT_DISABLED")
-fi
-
 SPLUNK_CONFIG_DIR="$BUILD_DIR/.splunk"
 cp "$BUILDPACK_DIR/setup/config.yaml" "$SPLUNK_CONFIG_DIR"
 
@@ -57,25 +43,6 @@ if [ $? -ne 0 ]; then
     echo "Find valid versions here: https://github.com/signalfx/splunk-otel-collector/tags" | indent
     exit 1;
 fi
-
-if [ "${SFX_AGENT_DISABLED}" = "true" ]; then
-    echo "-----> Skipping installing the SignalFx Agent Bundle"
-else
-    echo "-----> Downloading SignalFx Agent Bundle $SFX_AGENT_VERSION ($signalfx_agent_tar)"
-    wget -P "$SPLUNK_CONFIG_DIR/" "https://github.com/signalfx/signalfx-agent/releases/download/v$SFX_AGENT_VERSION/$signalfx_agent_tar" -o $signalfx_agent_tar > /dev/null 2>&1
-    #curl -L "https://github.com/signalfx/signalfx-agent/releases/download/v$SFX_AGENT_VERSION/$signalfx_agent_tar" -o $SPLUNK_CONFIG_DIR/$signalfx_agent_tar > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo "Downloading agent tarball failed" | indent
-        echo "$SFX_AGENT_VERSION may not be a valid version of the SignalFx Agent." | indent
-        echo "Find valid versions here: https://github.com/signalfx/signalfx-agent/tags" | indent
-        exit 1;
-    fi
-
-    echo "-----> Extracting SignalFx Agent Bundle"
-    tar -xf "$SPLUNK_CONFIG_DIR/$signalfx_agent_tar" -C "$SPLUNK_CONFIG_DIR"
-    rm -f "$SPLUNK_CONFIG_DIR/$signalfx_agent_tar"
-fi
-
 
 mkdir -p "$BUILD_DIR/.profile.d"
 cp "$BUILDPACK_DIR/setup/agent.sh" "$BUILD_DIR/.profile.d/"
